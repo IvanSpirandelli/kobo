@@ -1,34 +1,25 @@
 version: '3.8'
 services:
+    #postgresql container. For local use only. 
     postgres:
         image: postgres
         ports:
             - '5432:5432'
-        # env_file:
-        #     - kobo_backend/.env
-        environment:
-            # Set user/password for Postgres.
-            POSTGRES_USER: postgres
-            POSTGRES_PASSWORD: postgres
-            # Set a path where Postgres should store the data.
-            PGDATA: /var/lib/postgresql/data/pgdata
+        env_file:
+            - kobo_backend/.env
         restart: always
         volumes:
             - pgdata:/var/lib/postgresql/data
 
      # Our Phoenix container.
     phoenix:
-        # The build parameters for this container.
         build:
-            # Here we define that it should build from the current directory.
             context: ./kobo_backend
         env_file:
             - kobo_backend/.env
         ports:
-            # Mapping the port to make the Phoenix app accessible outside of the container.
-            - '4000:4000'
+             - '4000:4000'
         depends_on:
-            # The DB container needs to be started before we start this container.
             - postgres
 volumes:
   pgdata:
