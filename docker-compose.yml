@@ -19,9 +19,9 @@ services:
         # The build parameters for this container.
         build:
             # Here we define that it should build from the current directory.
-            context: .
+            context: ./kobo_backend
         env_file:
-            - .env
+            - kobo_backend/.env
         ports:
             # Mapping the port to make the Phoenix app accessible outside of the container.
             - '4000:4000'
