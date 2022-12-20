@@ -1,19 +1,17 @@
 #!/bin/bash
 
 # Wait until Postgres is ready.
-while ! pg_isready -q -h $POSTGRES_HOST -p $POSTGRES_PORT -U $POSTGRES_USER
+while ! pg_isready -q -h $PGHOST -p $PGPORT -U $PGUSER
 do
   echo "$(date) - waiting for database to start"
   sleep 2
 done
 
-# Create, migrate, and seed database if it doesn't exist.
-if [[ -z `psql -Atqc "\\list $POSTGRES_DATABASE"` ]]; then
-  echo "Database $POSTGRES_DATABASE does not exist. Creating..."
-  createdb -E UTF8 $POSTGRES_DATABASE -l en_US.UTF-8 -T template0
+# Check if DB exists. Create + Migrate + Populate if not.
+if [[ -z `psql -Atqc "\\list $PGDATABASE"` ]]; then
+  mix ecto.create
   mix ecto.migrate
   mix run priv/repo/seeds.exs
-  echo "Database $POSTGRES_DATABASE created."
 fi
 
 exec mix phx.server
